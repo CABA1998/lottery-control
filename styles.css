@@ -1,0 +1,33 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #fafafa;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 10px;
+    max-width: 420px;
+}
+
+.number {
+    padding: 12px;
+    background: #e8e8e8;
+    border-radius: 6px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.2s ease;
+    user-select: none;
+}
+
+.number:hover {
+    background: #d5d5d5;
+}
+
+.number.vendido {
+    background: #ff6b6b;
+    color: #ffffff;
+    font-weight: bold;
+}
