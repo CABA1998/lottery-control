@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Control de Números Vendidos</title>
     <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+    <main class="wrap">
+        <h2>Control de Números Vendidos</h2>
+        <p>Haz clic en un número para marcarlo como vendido.</p>
 
-    <h2>Control de Números Vendidos</h2>
-    <p>Haz clic en un número para marcarlo como vendido.</p>
+        <div class="grid" id="numbers-container" aria-label="Números de lotería"></div>
+    </main>
 
-    <div class="grid" id="numbers-container"></div>
-
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>

@@ -1,33 +1,58 @@
+/* Reset/ajuste básico */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
     font-family: Arial, sans-serif;
-    padding: 20px;
     background: #fafafa;
+    color: #222;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
 }
 
+/* Centrar y limitar ancho razonable */
+.wrap {
+    width: 100%;
+    max-width: 920px; /* evita que se estire demasiado en pantallas enormes */
+    margin: 0 auto;
+}
+
+/* Título */
+h2 { margin-bottom: 8px; }
+p { margin-bottom: 16px; color: #444; }
+
+/* GRID responsive: auto-fill + minmax */
 .grid {
     display: grid;
-    grid-template-columns: repeat(10, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
     gap: 10px;
-    max-width: 420px;
 }
 
+/* Caja de número */
 .number {
-    padding: 12px;
+    padding: 14px 8px;
     background: #e8e8e8;
-    border-radius: 6px;
+    border-radius: 8px;
     text-align: center;
     cursor: pointer;
-    font-size: 18px;
-    transition: background 0.2s ease;
+    font-size: 1rem;
+    transition: transform 0.12s ease, background 0.12s ease;
     user-select: none;
 }
 
-.number:hover {
-    background: #d5d5d5;
-}
+/* Pequeña interacción */
+.number:active { transform: scale(0.98); }
+.number:hover { filter: brightness(0.98); }
 
+/* Estado vendido */
 .number.vendido {
     background: #ff6b6b;
-    color: #ffffff;
-    font-weight: bold;
+    color: white;
+    font-weight: 700;
+}
+
+/* Ajustes para pantallas muy pequeñas */
+@media (max-width: 380px) {
+    .grid { gap: 8px; }
+    .number { padding: 12px 6px; font-size: 0.95rem; }
 }

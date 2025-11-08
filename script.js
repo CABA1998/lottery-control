@@ -1,19 +1,27 @@
-/**
- * Genera los números del 0 al 99 y crea los elementos HTML.
- * Aplica evento de clic para marcar como vendido.
- */
+// script.js
 document.addEventListener("DOMContentLoaded", () => {
-    const container = document.getElementById("numbers-container");
+  const container = document.getElementById("numbers-container");
 
-    for (let n = 0; n < 100; n++) {
-        const numberBox = document.createElement("div");
-        numberBox.className = "number";
-        numberBox.textContent = n;
+  // Cambia estos valores si quieres otro rango
+  const start = 0;
+  const end = 999;
 
-        numberBox.addEventListener("click", () => {
-            numberBox.classList.toggle("vendido");
-        });
+  for (let n = start; n <= end; n++) {
+    const box = document.createElement("div");
+    box.className = "number";
+    box.textContent = n;
+    box.setAttribute("role", "button");
+    box.setAttribute("tabindex", "0");
 
-        container.appendChild(numberBox);
-    }
+    // Click y tecla Enter/Espacio para accesibilidad
+    box.addEventListener("click", () => box.classList.toggle("vendido"));
+    box.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        box.classList.toggle("vendido");
+      }
+    });
+
+    container.appendChild(box);
+  }
 });
