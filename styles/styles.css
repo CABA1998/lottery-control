@@ -1,54 +1,227 @@
 body {
-  font-family: "Segoe UI", sans-serif;
-  background: #f5f5f5;
-  color: #333;
-  text-align: center;
+  font-family: "Poppins", sans-serif;
+  background: #fafafa;
   margin: 0;
-  padding: 20px;
+  padding: 0;
+  text-align: center;
+  color: #222;
 }
 
-h2 {
-  margin-bottom: 0;
+h1, h2 {
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
-p {
-  color: #555;
-  margin-bottom: 20px;
+button, input {
+  font-family: inherit;
 }
 
-.grid {
+header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
+  /* Fondo translúcido */
+  background: rgba(255, 255, 255, 0.72);
+
+  /* Efecto glass */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  /* Visual */
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+#numbers-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
   gap: 6px;
-  max-width: 700px;
+  padding: 16px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
-.number {
-  padding: 8px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.pair {
+  padding: 10px 0;
+  border-radius: 8px;
+  cursor: pointer;
   font-weight: bold;
-  cursor: default;
-  transition: transform 0.1s;
+  font-size: 0.9rem;
+  transition: 0.2s;
+  user-select: none;
 }
 
-.number:hover {
+.pair.libre {
+  background: #e8e8e8;
+  color: #222;               /* Texto más suave y elegante */
+  box-sizing: border-box;
+  transition: 0.5s ease;
+
+}
+
+.pair.libre:hover {
+  background: rgba(255,255,255,0.9);
+  outline: 1px solid #222;     /* 👈 la clave */
+  box-sizing: border-box;
+  outline-offset: -1px;        /* opcional, ajusta posición */
   transform: scale(1.05);
+ 
 }
 
-/* Colores por estado */
-.number.libre {
-  background-color: #e0e0e0;
-  color: #000;
-}
-
-.number.apartado {
-  background-color: #fff3b0;
-  color: #7a5c00;
-}
-
-.number.pagado {
-  background-color: #ff6b6b;
+.pair.ocupado {
+  background: #f44336;
   color: #fff;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Modal */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+  z-index: 21;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  width: 90%;
+  max-width: 350px;
+  text-align: left;
+    /* Animación inicial */
+  transform: scale(0.85) translateY(20px);
+  opacity: 0;
+  animation: modalShow 0.35s ease forwards;
+}
+@keyframes modalShow {
+  0% {
+    transform: scale(0.85) translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+
+.modal h2 {
+  margin-top: 0;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* O solo en el modal */
+.modal input {
+  box-sizing: border-box;     /* <- clave */
+  width: 100%;
+  margin: 6px 0 12px;
+  padding: 10px 12px;         /* un pelín más cómodo */
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.modal input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, .15);
+}
+
+.modal button {
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: 600;
+}
+
+.modal button:hover {
+  background: #43a047;
+}
+
+#search-input {
+  margin-top: 10px;
+  padding: 10px 14px;
+  width: 100%;
+  max-width: 320px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.15);
+  font-size: 1rem;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(6px);
+  outline: none;
+  transition: 0.2s ease;
+}
+
+#search-input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76,175,80,0.25);
+}
+
+.search-highlight {
+  outline: 3px solid #4caf50;
+  outline-offset: -3px;
+  background: #ffffff !important;
+  transform: scale(1.05);
+  transition: 0.25s ease;
+}
+
+/* --- LOADER OVERLAY --- */
+.loader-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 999;  
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* Ocultar (cuando termina el loading) */
+.loader-backdrop.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* --- SPINNER --- */
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid rgba(0,0,0,0.15);
+  border-top-color: #4caf50;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Texto bajo el loader */
+.loader-backdrop p {
+  font-size: 1rem;
+  margin-top: 12px;
+  color: #333;
 }

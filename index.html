@@ -3,14 +3,42 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Rifa Inocentes 2025</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rifa Inocentes 2025 🎭</title>
+    <link rel="stylesheet" href="styles/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+
 </head>
 
 <body>
-    <h2>Prueba de conexión con Firestore</h2>
-    <pre id="output">Cargando...</pre>
+    <header>
+        <h1>🎟️ Rifa Inocentes 2025</h1>
+        <p>💚Todos tenemos mucho que aportar para la cultura💚</p>
+        <input id="search-input" type="text" placeholder="Buscar número (000 - 999)" maxlength="3" />
+    </header>
 
-    <script type="module" src="scripts/getDataList.js"></script>
+    <main>
+        <div id="loader" class="loader-backdrop">
+            <div class="spinner"></div>
+            <p>Cargando oportunidades...</p>
+        </div>
+        <div id="numbers-container"></div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal-backdrop" id="modal-backdrop">
+        <div class="modal">
+            <h2>Comprar boleta</h2>
+            <p id="modal-pair-info"></p>
+            <input id="buyer-name" placeholder="Tu nombre" />
+            <input id="buyer-phone" placeholder="Tu teléfono" />
+            <button id="confirm-btn">Comprar por WhatsApp</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="scripts/getDataList.js?v=1"></script>
 </body>
 
 </html>
