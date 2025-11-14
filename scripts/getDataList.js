@@ -4,6 +4,8 @@ import {
   getFirestore,
   collection,
   getDocs,
+  updateDoc,
+  doc,
 } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebaseConfig.js";
 
@@ -14,10 +16,16 @@ const db = getFirestore(app);
 // Referencias del DOM
 const container = document.getElementById("numbers-container");
 const modal = document.getElementById("modal-backdrop");
-const modalInfo = document.getElementById("modal-pair-info");
+
 const confirmBtn = document.getElementById("confirm-btn");
-const nameInput = document.getElementById("buyer-name");
-const phoneInput = document.getElementById("buyer-phone");
+const nameInput = document.getElementById("name-input");
+const phoneInput = document.getElementById("phone-input");
+const modalError = document.getElementById("modal-error");
+const modalInfoMsg = document.getElementById("modal-info");
+const modalSuccessMsg = document.getElementById("modal-success");
+const modalForm = document.getElementById("modal-form");
+const modalTitle = document.getElementById("modal-title");
+const selectedNumbersBox = document.getElementById("selected-numbers");
 
 let selectedPair = null;
 
@@ -66,7 +74,11 @@ function renderPairs(pairs) {
       .join(" - ");
 
     if (pair.status === "libre") {
+      el.style.touchAction = "manipulation";
       el.addEventListener("click", () => openModal(pair));
+      el.addEventListener("touchstart", () => openModal(pair), {
+        passive: true,
+      });
     }
 
     container.appendChild(el);
@@ -74,42 +86,154 @@ function renderPairs(pairs) {
 }
 
 // Abrir modal
+// RESETEAR TODO AL ABRIR
 function openModal(pair) {
   selectedPair = pair;
-  modalInfo.textContent = `Números: ${pair.numbers
-    .map((n) => n.toString().padStart(3, "0"))
-    .join(" - ")}`;
+  modalTitle.innerText = "Comprar Boleta";
+
+  // chips de las opciones
+  // Crear chips de números seleccionados
+  selectedNumbersBox.innerHTML = "";
+
+  pair.numbers.forEach((num) => {
+    const chip = document.createElement("div");
+    chip.className = "number-chip";
+    chip.textContent = num.toString().padStart(3, "0");
+    selectedNumbersBox.appendChild(chip);
+  });
+
+  // Chip de costo
+  const priceChip = document.createElement("div");
+  priceChip.className = "cost-chip";
+  priceChip.textContent = "$10.000";
+
+  selectedNumbersBox.appendChild(priceChip);
+
+  modalInfoMsg.textContent =
+    "Ingresa tus datos para registrar la compra. Te redireccionaremos a WhatsApp para que envíes el comprobante de pago.";
+  modalInfoMsg.classList.remove("hidden");
+
+  modalError.classList.add("hidden");
+  modalError.textContent = "";
+
+  modalSuccessMsg.classList.add("hidden");
+  modalSuccessMsg.textContent = "";
+
+  modalForm.style.display = "block";
+  confirmBtn.disabled = true;
+  confirmBtn.innerHTML = "Enviar";
 
   nameInput.value = "";
   phoneInput.value = "";
-  modal.style.display = "flex";
+
+  modal.classList.add("active");
 }
 
-// Confirmar y abrir WhatsApp
-confirmBtn.addEventListener("click", () => {
+// VALIDACIONES EN TIEMPO REAL
+function validateForm() {
   const name = nameInput.value.trim();
   const phone = phoneInput.value.trim();
 
-  if (!name || !phone) {
-    alert("Por favor completa tu nombre y teléfono.");
-    return;
+  const isNameValid = name.length >= 3 && !/\d/.test(name); // sin números
+
+  const isPhoneValid = /^\d{10}$/.test(phone); // 10 dígitos numéricos
+
+  if (isNameValid && isPhoneValid) {
+    confirmBtn.disabled = false;
+  } else {
+    confirmBtn.disabled = true;
   }
+}
 
-  const message = encodeURIComponent(
-    `Hola, quiero participar en la rifa con los siguientes números:\n` +
-      `Números: ${selectedPair.numbers
-        .map((n) => n.toString().padStart(3, "0"))
-        .join(" - ")}\n` +
-      `Nombre: ${name}\nTeléfono: ${phone}`
-  );
+nameInput.addEventListener("input", validateForm);
+phoneInput.addEventListener("input", validateForm);
 
-  window.open(`https://wa.me/${sellerPhone}?text=${message}`, "_blank");
-  modal.style.display = "none";
+// BOTÓN CONFIRMAR
+confirmBtn.addEventListener("click", async () => {
+  if (confirmBtn.innerText === "Cerrar") {
+    modal.classList.remove("active");
+    return; // ⛔ DETIENE TODO EL FLUJO
+  }
+  const name = nameInput.value.trim();
+  const phone = phoneInput.value.trim();
+
+  // LIMPIAR MENSAJES
+  modalError.classList.add("hidden");
+  modalSuccessMsg.classList.add("hidden");
+
+  // OCULTAR FORMULARIO
+  modalForm.style.display = "none";
+
+  // MOSTRAR INFO DE PROCESO
+  modalInfoMsg.textContent = "Registrando tu compra, por favor espera…";
+  modalInfoMsg.classList.remove("hidden");
+
+  // SPINNER BOTÓN
+  confirmBtn.innerHTML = `<span class="spinner-btn"></span>Procesando…`;
+  confirmBtn.classList.add("btn-loading");
+  confirmBtn.disabled = true;
+
+  try {
+    // ACTUALIZAR FIRESTORE
+    await markAsReserved(selectedPair, name, phone);
+    // MOSTRAR ÉXITO
+    modalInfoMsg.classList.add("hidden");
+    modalSuccessMsg.textContent =
+      "¡Mil gracias por tu apoyo a la cultura! 💚 Mucha suerte 💚 ¡Te esperamos este 28 de diciembre en Hatoviejo!";
+    modalSuccessMsg.classList.remove("hidden");
+    modalTitle.innerText = "Compra exitosa";
+
+    // RETRASO DE 1 SEG PARA VER MENSAJE
+    await new Promise((res) => setTimeout(res, 1000));
+    // RECARGAR TABLERO
+    await loadPairs();
+
+    // ABRIR WHATSAPP
+    const message = encodeURIComponent(
+      `Hola, quiero participar en la rifa con los siguientes números:\n` +
+        `Números: ${selectedPair.numbers
+          .map((n) => n.toString().padStart(3, "0"))
+          .join(" - ")}\n` +
+        `Nombre: ${name}\nTeléfono: ${phone}`
+    );
+
+    // window.open(`https://wa.me/${sellerPhone}?text=${message}`, "_blank");
+    const whatsappURL = `https://wa.me/${sellerPhone}?text=${message}`;
+    // Detectar si es un dispositivo iOS (Safari móvil)
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isIOS) {
+      // Safari móvil bloquea window.open después de await → usar redirect
+      window.location.href = whatsappURL;
+    } else {
+      // En escritorio, Android y navegadores modernos → nueva pestaña
+      window.open(whatsappURL, "_blank");
+    }
+
+    // BOTÓN PARA CERRAR
+    confirmBtn.innerHTML = "Cerrar";
+    confirmBtn.classList.remove("btn-loading");
+    confirmBtn.disabled = false;
+  } catch (err) {
+    console.error("Error al reservar:", err);
+
+    modalInfoMsg.classList.add("hidden");
+
+    modalError.textContent =
+      "Hubo un error registrando la reserva. Intenta nuevamente.";
+    modalError.classList.remove("hidden");
+    modalTitle.innerText = "Ocurrió un problema";
+
+    modalForm.style.display = "block";
+
+    confirmBtn.innerHTML = "Enviar";
+    confirmBtn.disabled = true;
+  }
 });
 
 // Cerrar modal al hacer clic fuera
 modal.addEventListener("click", (e) => {
-  if (e.target === modal) modal.style.display = "none";
+  if (e.target === modal) modal.classList.remove("active");
 });
 // --- BUSCAR PAREJA POR NÚMERO ---
 const searchInput = document.getElementById("search-input");
@@ -141,10 +265,15 @@ function highlightPair(number) {
       pairEl.classList.add("search-highlight");
 
       // Hacer scroll suave
-      pairEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => scrollToElement(pairEl), 50);
       break;
     }
   }
+}
+
+function scrollToElement(el) {
+  const y = el.getBoundingClientRect().top + window.scrollY - 250;
+  window.scrollTo({ top: y, behavior: "smooth" });
 }
 
 function clearSearchHighlight() {
@@ -161,6 +290,21 @@ function showLoader() {
 
 function hideLoader() {
   loader.classList.add("hidden");
+}
+async function markAsReserved(pair, name, phone) {
+  try {
+    const ref = doc(db, "raffles", "rifa2025", "pairs", pair.id);
+    await updateDoc(ref, {
+      status: "apartado",
+      buyer: name,
+      contact: phone,
+      seller: sellerParam,
+      note: "Hola",
+    });
+    console.log(`✔ Pareja ${pair.pair_id} marcada como apartado`);
+  } catch (err) {
+    console.error("❌ Error al actualizar estado:", err);
+  }
 }
 
 loadPairs();

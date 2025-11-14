@@ -15,7 +15,7 @@
     <header>
         <h1>🎟️ Rifa Inocentes 2025</h1>
         <p>💚Todos tenemos mucho que aportar para la cultura💚</p>
-        <input id="search-input" type="text" placeholder="Buscar número (000 - 999)" maxlength="3" />
+        <input id="search-input" type="tel" placeholder="Buscar número (000 - 999)" maxlength="3" pattern="[0-9]{10}" />
     </header>
 
     <main>
@@ -29,16 +29,31 @@
     <!-- Modal -->
     <div class="modal-backdrop" id="modal-backdrop">
         <div class="modal">
-            <h2>Comprar boleta</h2>
-            <p id="modal-pair-info"></p>
-            <input id="buyer-name" placeholder="Tu nombre" />
-            <input id="buyer-phone" placeholder="Tu teléfono" />
-            <button id="confirm-btn">Comprar por WhatsApp</button>
-        </div>
-    </div>
+            <h2 id="modal-title"></h2>
+            <div id="selected-numbers" class="selected-numbers"></div>
 
-    <!-- Scripts -->
-    <script type="module" src="scripts/getDataList.js?v=1"></script>
+
+
+            <!-- FORMULARIO -->
+            <div id="modal-form">
+                <input id="name-input" type="text" placeholder="Tu nombre completo" />
+
+                <input id="phone-input" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10"
+                    placeholder="Tu número de celular (10 dígitos)" />
+            </div>
+
+            <!-- MENSAJES -->
+            <div id="modal-info" class="modal-info hidden"></div>
+            <div id="modal-error" class="modal-error hidden"></div>
+            <div id="modal-success" class="modal-success hidden"></div>
+
+
+            <!-- BOTÓN -->
+            <button id="confirm-btn" disabled>Enviar</button>
+        </div>
+
+        <!-- Scripts -->
+        <script type="module" src="scripts/getDataList.js?v=1"></script>
 </body>
 
 </html>
