@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Rifa 2025 🎭</title>
+
+    <link rel="stylesheet" href="styles/styles.css" />
+    <link rel="stylesheet" href="styles/admin.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <header>
+        <h1>🛠️ Administrador — Rifa 2025</h1>
+        <input id="search-input" type="tel" placeholder="Buscar número (000 - 999)" maxlength="3" />
+    </header>
+
+    <main>
+        <div id="loader" class="loader-backdrop">
+            <div class="spinner"></div>
+            <p>Cargando oportunidades...</p>
+        </div>
+
+        <div id="numbers-container"></div>
+    </main>
+
+    <!-- Modal Admin -->
+    <div class="modal-backdrop" id="modal-backdrop">
+        <div class="modal admin-modal">
+
+            <h2 id="modal-title">Editar boleta</h2>
+            <div id="selected-numbers" class="selected-numbers"></div>
+
+            <div id="admin-step" class="modal-step">
+                <label>Estado:</label>
+                <select id="status-select">
+                    <option value="pagado">Pagado</option>
+                    <option value="confirmado">Confirmado</option>
+                    <option value="apartado">Apartado</option>
+                    <option value="libre">Libre</option>
+                </select>
+
+                <input id="admin-pin" type="password" maxlength="4" placeholder="PIN (4 dígitos)" />
+
+                <button id="admin-update-btn" disabled>Actualizar</button>
+            </div>
+
+            <div id="modal-error" class="modal-error hidden"></div>
+            <div id="modal-success" class="modal-success hidden"></div>
+        </div>
+    </div>
+
+    <script type="module" src="scripts/admin.js?v=1"></script>
+
+</body>
+
+</html>

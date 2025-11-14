@@ -1,0 +1,55 @@
+/* Reutiliza estilos globales */
+
+/* Colores para los estados */
+.pair.libre {
+  background: #e0e0e0;
+  color: #222;
+}
+
+.pair.apartado {
+  background: #FFEB3B;
+  color: #333;
+}
+
+.pair.pagado {
+  background: #4CAF50;
+  color: #fff;
+  cursor: not-allowed !important;
+  opacity: 0.8;
+}
+
+.pair.confirmado {
+  background: #E53935;
+  color: #fff;
+}
+
+/* Modal admin */
+.admin-modal select,
+.admin-modal input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #bbb;
+  margin-bottom: 12px;
+}
+
+.admin-modal select:focus,
+.admin-modal input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76,175,80,0.2);
+}
+
+#admin-update-btn {
+  background: #4caf50;
+  color: white;
+  font-weight: 600;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#admin-update-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
