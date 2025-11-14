@@ -74,11 +74,11 @@ function renderPairs(pairs) {
       .join(" - ");
 
     if (pair.status === "libre") {
-      el.style.touchAction = "manipulation";
+      // el.style.touchAction = "manipulation";
       el.addEventListener("click", () => openModal(pair));
-      el.addEventListener("touchstart", () => openModal(pair), {
-        passive: true,
-      });
+      // el.addEventListener("touchstart", () => openModal(pair), {
+      //   passive: true,
+      // });
     }
 
     container.appendChild(el);
@@ -109,24 +109,11 @@ function openModal(pair) {
 
   selectedNumbersBox.appendChild(priceChip);
 
-  modalInfoMsg.textContent =
-    "Ingresa tus datos para registrar la compra. Te redireccionaremos a WhatsApp para que envíes el comprobante de pago.";
-  modalInfoMsg.classList.remove("hidden");
-
-  modalError.classList.add("hidden");
-  modalError.textContent = "";
-
-  modalSuccessMsg.classList.add("hidden");
-  modalSuccessMsg.textContent = "";
-
-  modalForm.style.display = "block";
-  confirmBtn.disabled = true;
-  confirmBtn.innerHTML = "Enviar";
-
   nameInput.value = "";
   phoneInput.value = "";
 
   modal.classList.add("active");
+  goToStep(1);
 }
 
 // VALIDACIONES EN TIEMPO REAL
@@ -137,98 +124,143 @@ function validateForm() {
   const isNameValid = name.length >= 3 && !/\d/.test(name); // sin números
 
   const isPhoneValid = /^\d{10}$/.test(phone); // 10 dígitos numéricos
-
-  if (isNameValid && isPhoneValid) {
-    confirmBtn.disabled = false;
-  } else {
-    confirmBtn.disabled = true;
-  }
+  document.getElementById("step1-btn").disabled = !(
+    isNameValid && isPhoneValid
+  );
 }
 
 nameInput.addEventListener("input", validateForm);
 phoneInput.addEventListener("input", validateForm);
 
 // BOTÓN CONFIRMAR
-confirmBtn.addEventListener("click", async () => {
-  if (confirmBtn.innerText === "Cerrar") {
-    modal.classList.remove("active");
-    return; // ⛔ DETIENE TODO EL FLUJO
-  }
-  const name = nameInput.value.trim();
-  const phone = phoneInput.value.trim();
+// confirmBtn.addEventListener("click", async () => {
+//   if (confirmBtn.innerText === "Cerrar") {
+//     modal.classList.remove("active");
+//     return; // ⛔ DETIENE TODO EL FLUJO
+//   }
+//   const name = nameInput.value.trim();
+//   const phone = phoneInput.value.trim();
 
-  // LIMPIAR MENSAJES
-  modalError.classList.add("hidden");
-  modalSuccessMsg.classList.add("hidden");
+//   // LIMPIAR MENSAJES
+//   modalError.classList.add("hidden");
+//   modalSuccessMsg.classList.add("hidden");
 
-  // OCULTAR FORMULARIO
-  modalForm.style.display = "none";
+//   // OCULTAR FORMULARIO
+//   modalForm.style.display = "none";
 
-  // MOSTRAR INFO DE PROCESO
-  modalInfoMsg.textContent = "Registrando tu compra, por favor espera…";
-  modalInfoMsg.classList.remove("hidden");
+//   // MOSTRAR INFO DE PROCESO
+//   modalInfoMsg.textContent = "Registrando tu compra, por favor espera…";
+//   modalInfoMsg.classList.remove("hidden");
 
-  // SPINNER BOTÓN
-  confirmBtn.innerHTML = `<span class="spinner-btn"></span>Procesando…`;
-  confirmBtn.classList.add("btn-loading");
-  confirmBtn.disabled = true;
+//   // SPINNER BOTÓN
+//   confirmBtn.innerHTML = `<span class="spinner-btn"></span>Procesando…`;
+//   confirmBtn.classList.add("btn-loading");
+//   confirmBtn.disabled = true;
 
+//   try {
+//     // ACTUALIZAR FIRESTORE
+//     await markAsReserved(selectedPair, name, phone);
+//     // MOSTRAR ÉXITO
+//     modalInfoMsg.classList.add("hidden");
+//     modalSuccessMsg.textContent =
+//       "¡Mil gracias por tu apoyo a la cultura! 💚 Mucha suerte 💚 ¡Te esperamos este 28 de diciembre en Hatoviejo!";
+//     modalSuccessMsg.classList.remove("hidden");
+//     modalTitle.innerText = "Compra exitosa";
+
+//     // RETRASO DE 1 SEG PARA VER MENSAJE
+//     await new Promise((res) => setTimeout(res, 1000));
+//     // RECARGAR TABLERO
+//     await loadPairs();
+
+//     // ABRIR WHATSAPP
+//     const message = encodeURIComponent(
+//       `Hola, quiero participar en la rifa con los siguientes números:\n` +
+//         `Números: ${selectedPair.numbers
+//           .map((n) => n.toString().padStart(3, "0"))
+//           .join(" - ")}\n` +
+//         `Nombre: ${name}\nTeléfono: ${phone}`
+//     );
+
+//     // window.open(`https://wa.me/${sellerPhone}?text=${message}`, "_blank");
+//     const whatsappURL = `https://wa.me/${sellerPhone}?text=${message}`;
+//     // Detectar si es un dispositivo iOS (Safari móvil)
+//     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+//     if (isIOS) {
+//       // Safari móvil bloquea window.open después de await → usar redirect
+//       window.location.href = whatsappURL;
+//     } else {
+//       // En escritorio, Android y navegadores modernos → nueva pestaña
+//       window.open(whatsappURL, "_blank");
+//     }
+
+//     // BOTÓN PARA CERRAR
+//     confirmBtn.innerHTML = "Cerrar";
+//     confirmBtn.classList.remove("btn-loading");
+//     confirmBtn.disabled = false;
+//   } catch (err) {
+//     console.error("Error al reservar:", err);
+
+//     modalInfoMsg.classList.add("hidden");
+
+//     modalError.textContent =
+//       "Hubo un error registrando la reserva. Intenta nuevamente.";
+//     modalError.classList.remove("hidden");
+//     modalTitle.innerText = "Ocurrió un problema";
+
+//     modalForm.style.display = "block";
+
+//     confirmBtn.innerHTML = "Enviar";
+//     confirmBtn.disabled = true;
+//   }
+// });
+document.getElementById("step1-btn").addEventListener("click", () => {
+  goToStep(2);
+});
+
+document.getElementById("step2-btn").addEventListener("click", async () => {
   try {
-    // ACTUALIZAR FIRESTORE
-    await markAsReserved(selectedPair, name, phone);
-    // MOSTRAR ÉXITO
-    modalInfoMsg.classList.add("hidden");
-    modalSuccessMsg.textContent =
-      "¡Mil gracias por tu apoyo a la cultura! 💚 Mucha suerte 💚 ¡Te esperamos este 28 de diciembre en Hatoviejo!";
-    modalSuccessMsg.classList.remove("hidden");
-    modalTitle.innerText = "Compra exitosa";
+    modalError.classList.add("hidden");
+    document.getElementById(
+      "step2-btn"
+    ).innerHTML = `<span class="spinner-btn"></span>Procesando…`;
 
-    // RETRASO DE 1 SEG PARA VER MENSAJE
-    await new Promise((res) => setTimeout(res, 1000));
-    // RECARGAR TABLERO
-    await loadPairs();
-
-    // ABRIR WHATSAPP
-    const message = encodeURIComponent(
-      `Hola, quiero participar en la rifa con los siguientes números:\n` +
-        `Números: ${selectedPair.numbers
-          .map((n) => n.toString().padStart(3, "0"))
-          .join(" - ")}\n` +
-        `Nombre: ${name}\nTeléfono: ${phone}`
+    await markAsReserved(
+      selectedPair,
+      nameInput.value.trim(),
+      phoneInput.value.trim()
     );
+    await loadPairs();
+    document.getElementById("step2-btn").innerHTML = "Ya pagué / Continuar";
+    document.getElementById("step2-btn").classList.remove("btn-loading");
 
-    // window.open(`https://wa.me/${sellerPhone}?text=${message}`, "_blank");
-    const whatsappURL = `https://wa.me/${sellerPhone}?text=${message}`;
-    // Detectar si es un dispositivo iOS (Safari móvil)
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    if (isIOS) {
-      // Safari móvil bloquea window.open después de await → usar redirect
-      window.location.href = whatsappURL;
-    } else {
-      // En escritorio, Android y navegadores modernos → nueva pestaña
-      window.open(whatsappURL, "_blank");
-    }
-
-    // BOTÓN PARA CERRAR
-    confirmBtn.innerHTML = "Cerrar";
-    confirmBtn.classList.remove("btn-loading");
-    confirmBtn.disabled = false;
+    goToStep(3); // Mostrar mensaje de éxito
   } catch (err) {
-    console.error("Error al reservar:", err);
-
-    modalInfoMsg.classList.add("hidden");
-
-    modalError.textContent =
-      "Hubo un error registrando la reserva. Intenta nuevamente.";
+    modalError.textContent = "Error registrando tu compra. Intenta nuevamente.";
     modalError.classList.remove("hidden");
-    modalTitle.innerText = "Ocurrió un problema";
-
-    modalForm.style.display = "block";
-
-    confirmBtn.innerHTML = "Enviar";
-    confirmBtn.disabled = true;
+    document.getElementById("step2-btn").innerHTML = "Ya pagué / Continuar";
+    document.getElementById("step2-btn").classList.remove("btn-loading");
   }
+});
+
+document.getElementById("step3-btn").addEventListener("click", () => {
+  const message = encodeURIComponent(
+    `Hola, adjunto comprobante de pago.\n` +
+      `Números: ${selectedPair.numbers
+        .map((n) => n.toString().padStart(3, "0"))
+        .join(" - ")}\n` +
+      `Nombre: ${nameInput.value.trim()}\n` +
+      `Teléfono: ${phoneInput.value.trim()}`
+  );
+
+  const whatsappURL = `https://wa.me/${sellerPhone}?text=${message}`;
+
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  if (isIOS) window.location.href = whatsappURL;
+  else window.open(whatsappURL, "_blank");
+
+  modal.classList.remove("active");
 });
 
 // Cerrar modal al hacer clic fuera
@@ -305,6 +337,17 @@ async function markAsReserved(pair, name, phone) {
   } catch (err) {
     console.error("❌ Error al actualizar estado:", err);
   }
+}
+function goToStep(step) {
+  document.getElementById("step-1").classList.add("hidden");
+  document.getElementById("step-2").classList.add("hidden");
+  document.getElementById("step-3").classList.add("hidden");
+
+  document.getElementById(`step-${step}`).classList.remove("hidden");
+
+  if (step === 1) modalTitle.innerText = "Comprar boleta";
+  if (step === 2) modalTitle.innerText = "Realizar pago";
+  if (step === 3) modalTitle.innerText = "Compra exitosa";
 }
 
 loadPairs();
