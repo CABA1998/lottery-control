@@ -420,3 +420,22 @@ button:disabled {
 .legend-box.confirmado {
   background: #E53935;
 }
+
+
+.body {
+  position: relative;
+  min-height: 100vh;
+  z-index: 0;
+}
+
+.body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('../assets/imagenRifa.png');
+  background-repeat: repeat;
+  background-size: 150px; /* tu tamaño de grilla */
+
+  opacity: 0.9;      /* 🔥 OPACIDAD solo al fondo */
+  z-index: -1;
+}
