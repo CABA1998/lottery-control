@@ -24,6 +24,7 @@ const pinInput = document.getElementById("admin-pin");
 const updateBtn = document.getElementById("admin-update-btn");
 const modalError = document.getElementById("modal-error");
 const modalSuccess = document.getElementById("modal-success");
+const sellerSpan = document.getElementById("seller");
 
 let selectedPair = null;
 
@@ -33,6 +34,8 @@ const ADMIN_PIN = "2025";
 // Filtrar por vendedor
 const urlParams = new URLSearchParams(window.location.search);
 const sellerFilter = urlParams.get("seller") || null;
+
+sellerSpan.textContent = sellerFilter ? `Vendedor: ${sellerFilter}` : "Todas";
 
 // Loader
 const loader = document.getElementById("loader");
