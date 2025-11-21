@@ -35,7 +35,7 @@ const ADMIN_PIN = "2025";
 const urlParams = new URLSearchParams(window.location.search);
 const sellerFilter = urlParams.get("seller") || null;
 
-sellerSpan.textContent = sellerFilter ? `Vendedor: ${sellerFilter}` : "Todas";
+sellerSpan.textContent = sellerFilter ? `Vendedor: ${sellerFilter}` : "General";
 
 // Loader
 const loader = document.getElementById("loader");

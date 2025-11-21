@@ -53,3 +53,49 @@
   cursor: not-allowed;
 }
 
+/* --- LEYENDA / CONVENCIONES --- */
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px;
+  margin-top: 5px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.legend-box {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  display: inline-block;
+  border: 1px solid rgba(0,0,0,0.2);
+}
+
+/* Colores según estado */
+.legend-box.libre {
+  background: #e0e0e0;
+}
+
+.legend-box.apartado {
+  background: #FFEB3B;
+}
+
+.legend-box.pagado {
+  background: #4CAF50;
+}
+
+.legend-box.confirmado {
+  background: #E53935;
+}
+
+
