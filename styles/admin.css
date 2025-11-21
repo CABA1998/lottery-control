@@ -14,7 +14,6 @@
 .pair.pagado {
   background: #4CAF50;
   color: #fff;
-  cursor: not-allowed !important;
   opacity: 0.8;
 }
 

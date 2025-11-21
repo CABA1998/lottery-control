@@ -25,6 +25,8 @@ const updateBtn = document.getElementById("admin-update-btn");
 const modalError = document.getElementById("modal-error");
 const modalSuccess = document.getElementById("modal-success");
 const sellerSpan = document.getElementById("seller");
+const buyerName = document.getElementById("name");
+const buyerPhone = document.getElementById("buyer-phone");
 
 let selectedPair = null;
 
@@ -77,18 +79,19 @@ function renderPairs(pairs) {
       .map((n) => n.toString().padStart(3, "0"))
       .join(" - ");
 
-    if (pair.status !== "pagado") {
-      el.addEventListener("click", () => openModal(pair));
-    }
+    el.addEventListener("click", () => openModal(pair));
 
     container.appendChild(el);
   });
 }
 
 function openModal(pair) {
+  console.log(pair);
   selectedPair = pair;
+  updateBtn.disabled = selectedPair.status === "pagado";
   modalTitle.innerText = `Editar estado`;
-
+  buyerName.textContent = `Nombre: ${pair.buyer}`;
+  buyerPhone.textContent = `Tel: ${pair.contact}`;
   selectedNumbersBox.innerHTML = "";
   pair.numbers.forEach((num) => {
     const chip = document.createElement("div");
@@ -109,7 +112,8 @@ function openModal(pair) {
 
 // Validar PIN
 pinInput.addEventListener("input", () => {
-  updateBtn.disabled = pinInput.value !== ADMIN_PIN;
+  updateBtn.disabled =
+    pinInput.value !== ADMIN_PIN || selectedPair.status === "pagado";
 });
 
 // Update
